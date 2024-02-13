@@ -61,7 +61,7 @@ async function updateUser(req, res) {
     try {
         const { userId } = req.params;
         const userData = req.body;
-        await userService.update(userId, userData);
+        await userService.findByIdAndUpdate(userId, userData);
 
         res.status(200).json({
             status: 200,
@@ -78,7 +78,7 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
     try {
         const { userId } = req.params;
-        await userService.remove(userId);
+        await userService.findByIdAndDelete(userId);
 
         res.status(200).json({
             status: 200,

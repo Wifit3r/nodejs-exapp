@@ -1,6 +1,12 @@
+const mongoose = require('mongoose');
 const express = require('express');
-const { port } = require('./config');
+const { port, mongodb_uri } = require('./config');
 const usersRouter = require('./routes/users.route');
+
+mongoose.connect(mongodb_uri)
+  .then(() => {
+    console.log('Mongo DB connected');
+  });
 
 const app = express();
 

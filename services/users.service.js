@@ -1,49 +1,36 @@
-const mockData = require('../helpers/mock-data');
-
-function _generateId() {
-    const crypto = require("crypto");
-    return crypto.randomBytes(16).toString("hex");
-}
+const userModel = require('../models/user.model');
 
 async function create(user) {
-    const newUser = { id: _generateId(), ...user };
-    mockData.users.push(newUser);
-
-    return newUser;
+    return userModel.create(user);
 }
 
-async function find({ searchString = '', page = 1, perPage = Number.MAX_SAFE_INTEGER }) {
-    searchString = searchString?.toLowerCase();
-    const searchResult = mockData.users.filter(u => u.firstName?.toLowerCase().includes(searchString));
+async function find({ searchString = '', page = 1, perPage = 20 }) {
+    const filter = {
+        firstName: { $regex: `^${searchString}`, $options: 'gi' },
+    };
 
     return {
-        items: searchResult.slice((page - 1)*perPage, page * perPage),
-        count: searchResult.length,
+        items: await userModel.find(filter).skip((page - 1) * perPage).limit(Number(perPage)),
+        count: await userModel.countDocuments(filter),
     }
 }
 
 async function findById(id) {
-    return mockData.users.find(u => u.id == id);
+    return userModel.findById(id);
 }
 
-async function update(userId, userData) {
-    const index = mockData.users.findIndex(u => u.id === userId);
-
-    if (index === -1) return;
-
-    const updatedUser = { ...mockData.users[index], ...userData, id: userId };
-
-    mockData.users[index] = updatedUser;
+async function findByIdAndUpdate(id, update) {
+    return userModel.findByIdAndUpdate(id, update, { upsert: false, new: true });
 };
 
-async function remove(id) {
-    mockData.users = mockData.users.filter(u => u.id != id);
+async function findByIdAndDelete(id) {
+    return userModel.findByIdAndDelete(id);
 };
 
 module.exports = {
     create,
     find,
     findById,
-    update,
-    remove,
+    findByIdAndUpdate,
+    findByIdAndDelete,
 };
