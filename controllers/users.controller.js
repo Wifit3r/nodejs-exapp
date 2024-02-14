@@ -1,38 +1,31 @@
 const userService = require('../services/users.service');
+const createError = require('http-errors');
 
-async function createUser(req, res) {
+async function createUser(req, res, next) {
     try {
-       const newUser = await userService.create(req.body);
+        const newUser = await userService.create(req.body);
 
         res.status(200).json({
             status: 200,
             data: newUser,
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: 500,
-            error: err,
-        });
+    } catch(err) {
+        next(createError.InternalServerError(err.message));
     }
 };
 
-async function getUsers(req, res) {
+async function getUsers(req, res, next) {
     try {
         res.status(200).json({
             status: 200,
             data: await userService.find(req.query),
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: 500,
-            error: err,
-        });
+    } catch(err) {
+        next(createError.InternalServerError(err.message));
     }
 };
 
-async function getUser(req, res) {
+async function getUser(req, res, next) {
     try {
         const { userId } = req.params;
         const user = await userService.findById(userId);
@@ -40,7 +33,9 @@ async function getUser(req, res) {
         if (!user) {
             return res.status(400).json({
                 status: 400,
-                message: 'User not found.',
+                error: {
+                    message: 'User not found.'
+                },
             });
         }
 
@@ -48,16 +43,12 @@ async function getUser(req, res) {
             status: 200,
             data: user,
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: 500,
-            error: err,
-        });
+    } catch(err) {
+        next(createError.InternalServerError(err.message));
     }
 };
 
-async function updateUser(req, res) {
+async function updateUser(req, res, next) {
     try {
         const { userId } = req.params;
         const userData = req.body;
@@ -66,16 +57,12 @@ async function updateUser(req, res) {
         res.status(200).json({
             status: 200,
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: 500,
-            error: err,
-        });
+    } catch(err) {
+        next(createError.InternalServerError(err.message));
     }
 };
 
-async function deleteUser(req, res) {
+async function deleteUser(req, res, next) {
     try {
         const { userId } = req.params;
         await userService.findByIdAndDelete(userId);
@@ -83,12 +70,8 @@ async function deleteUser(req, res) {
         res.status(200).json({
             status: 200,
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            status: 500,
-            error: err,
-        });
+    } catch(err) {
+        next(createError.InternalServerError(err.message));
     }
 };
 
