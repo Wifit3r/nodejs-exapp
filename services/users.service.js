@@ -27,10 +27,15 @@ async function findByIdAndDelete(id) {
     return userModel.findByIdAndDelete(id);
 };
 
+async function findOne(filter) {
+    return userModel.findOne(filter);
+}
+
 module.exports = {
     create,
     find,
     findById,
     findByIdAndUpdate,
     findByIdAndDelete,
+    findOne,
 };
