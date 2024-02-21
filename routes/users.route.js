@@ -1,16 +1,22 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require('../controllers/users.controller');
-const middleware = require('../middlewares/users.middleware');
+const controllers = require('../controllers/users.controller');
+const middlewares = require('../middlewares/users.middleware');
+const { authenticationCheck } = require('../middlewares/auth.middleware');
 
 router.route('/')
-    .get(controller.getUsers)
-    .post(middleware.userCreationDataValidation, controller.createUser);
+    .post(middlewares.userCreationDataValidation, controllers.createUser);
+
+// Router-level middleware. Executed every time the app receives a request and checked authentication
+router.use(authenticationCheck);
+
+router.route('/')
+    .get(controllers.getUsers);
 
 router.route('/:userId')
-    .get(middleware.userByIdValidation, controller.getUser)
-    .patch(middleware.userByIdValidation, middleware.userUpdateDataValidation, controller.updateUser)
-    .delete(middleware.userByIdValidation, controller.deleteUser);
+    .get(middlewares.userByIdValidation, controllers.getUser)
+    .patch(middlewares.userByIdValidation, middlewares.userUpdateDataValidation, controllers.updateUser)
+    .delete(middlewares.userByIdValidation, controllers.deleteUser);
 
 module.exports = router;

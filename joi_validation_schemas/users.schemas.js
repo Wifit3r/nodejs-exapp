@@ -22,6 +22,11 @@ const UserCreateSchema = Joi.object({
 
     gender: Joi.string()
         .valid(...Object.values(genderEnum)),
+
+    password: Joi.string()
+        .required()
+        .min(6)
+        .max(10),
 });
 
 const UserUpdateSchema = Joi.object({

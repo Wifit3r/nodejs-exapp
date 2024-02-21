@@ -28,6 +28,9 @@ const userSchema = new Schema({
         type: String,
         enum: Object.values(genderEnum),
     },
+    password: {
+        type: String, // Contains hashed password
+    },
 }, {
     timestamps: true,
 });

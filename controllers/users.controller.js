@@ -1,13 +1,17 @@
 const userService = require('../services/users.service');
 const createError = require('http-errors');
+const bcrypt = require('bcrypt');
 
 async function createUser(req, res, next) {
     try {
-        const newUser = await userService.create(req.body);
+        const _id = await userService.create({
+            ...req.body,
+            password: await bcrypt.hash(req.body.password, await bcrypt.genSalt(10))
+        });
 
         res.status(200).json({
             status: 200,
-            data: newUser,
+            data: { _id },
         });
     } catch(err) {
         next(createError.InternalServerError(err.message));

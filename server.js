@@ -1,9 +1,13 @@
+const { port, mongodb_uri } = require('./config');
+
 const mongoose = require('mongoose');
 const express = require('express');
 const createError = require('http-errors');
-const { port, mongodb_uri } = require('./config');
-const usersRouter = require('./routes/users.route');
+
 const { authenticationCheck } = require('./middlewares/auth.middleware');
+
+const authRouter = require('./routes/auth.route');
+const usersRouter = require('./routes/users.route');
 
 mongoose.connect(mongodb_uri)
   .then(() => {
@@ -31,10 +35,8 @@ app.get('/', (req, res) => {
   })
 });
 
-// Application-level middleware. Executed every time the app receives a request and checked simple authentication
-app.use(authenticationCheck);
-
 // Rest of routs
+app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 
 // Application-level middleware. Handling requests for a non-existent path
