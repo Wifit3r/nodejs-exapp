@@ -19,4 +19,10 @@ router.route('/:userId')
     .patch(middlewares.userByIdValidation, middlewares.userUpdateDataValidation, controllers.updateUser)
     .delete(middlewares.userByIdValidation, controllers.deleteUser);
 
+router.route('/:userId/profilePicture')
+    .put(middlewares.userByIdValidation, middlewares.userUploadProfilePicture, controllers.updateUserProfilePicture);
+
+router.route('/upload')
+    .post(middlewares.usersUpload, controllers.uploadUsers);
+
 module.exports = router;

@@ -3,6 +3,7 @@ const { port, mongodb_uri } = require('./config');
 const mongoose = require('mongoose');
 const express = require('express');
 const createError = require('http-errors');
+const multer = require('multer');
 
 const { authenticationCheck } = require('./middlewares/auth.middleware');
 
@@ -15,6 +16,8 @@ mongoose.connect(mongodb_uri)
   });
 
 const app = express();
+
+app.use(express.static('public'));
 
 // Built-in middleware that parses incoming requests with JSON payloads
 app.use(express.json());
@@ -42,6 +45,17 @@ app.use('/users', usersRouter);
 // Application-level middleware. Handling requests for a non-existent path
 app.use((req, res, next) => {
   next(createError.NotFound());
+});
+
+// Multer error handler middleware
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      throw createError.BadRequest('File size limit exceeded. Please upload a smaller file.');
+    }
+  }
+
+  next(err);
 });
 
 // Error-handling middleware. Handling global application errors

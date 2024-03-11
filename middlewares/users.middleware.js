@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const ObjectId = require('mongoose').Types.ObjectId;
 const userService = require('../services/users.service');
 const { UserCreateSchema, UserUpdateSchema } = require('../joi_validation_schemas/users.schemas');
+const multer = require('multer');
 
 async function userByIdValidation(req, res, next) {
     try {
@@ -85,8 +86,27 @@ const userUpdateDataValidation = async (req, res, next) => {
     }
 };
 
+//const userUploadProfilePicture = multer({ dest: 'public/profilePictures/' }).single('file');
+const userUploadProfilePicture = multer({
+    storage: multer.diskStorage({
+      destination: 'public/profilePictures/',
+    }),
+    limits: { fileSize: 100 * 1024 /* bytes */ },
+    fileFilter: (req, file, callback) => {
+      if (!['image/png', 'image/jpeg', 'image/jpg', 'image/webp'].includes(file.mimetype)) {
+        return callback(createError.BadRequest("File is not allowed"));
+      }
+
+      callback(null, true);
+    }
+}).single('file');
+
+const usersUpload = multer().single('file');
+
 module.exports = {
     userByIdValidation,
     userCreationDataValidation,
     userUpdateDataValidation,
+    userUploadProfilePicture,
+    usersUpload,
 };
