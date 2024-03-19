@@ -5,7 +5,7 @@ const express = require('express');
 const createError = require('http-errors');
 const multer = require('multer');
 
-const { authenticationCheck } = require('./middlewares/auth.middleware');
+const startScheduleJobs = require('./jobs');
 
 const authRouter = require('./routes/auth.route');
 const usersRouter = require('./routes/users.route');
@@ -13,6 +13,7 @@ const usersRouter = require('./routes/users.route');
 mongoose.connect(mongodb_uri)
   .then(() => {
     console.log('Mongo DB connected');
+    startScheduleJobs();
   });
 
 const app = express();
