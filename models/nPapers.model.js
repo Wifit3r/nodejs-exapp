@@ -1,32 +1,35 @@
-const { Schema, model } = require('mongoose');
+const mongoose = require('mongoose'); // Імпортуємо mongoose
+const { Schema, model } = mongoose; // Деструктуруємо Schema та model з mongoose
 
+// Схема для nPapers
 const nPapersSchema = new Schema({
-    thema:{
+    thema: {
         type: String,
         required: true,
-        trim: true,
+        trim: true
     },
-    content:{
+    content: {
         type: String,
         required: true,
-        trim: true,
+        trim: true
     },
-    date:{
+    date: {
         type: Date,
-        required: true,
+        required: true
     },
-    namesOfAddresants:{
+    namesOfAddresants: {
         type: [String],
         required: true,
-        default: [],
+        default: []
     },
-    addresesOfAddresants:{
+    addresesOfAddresants: {
         type: [String],
         required: true,
-        default: [],
-    },},
-{
-    timestamp:true,
+        default: []
+    }
+}, {
+    timestamps: true // Увімкнено автоматичне додавання полів createdAt і updatedAt
 });
 
+// Експортуємо модель
 module.exports = model('nPapers', nPapersSchema);

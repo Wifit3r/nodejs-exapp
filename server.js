@@ -1,6 +1,5 @@
-const { port, mongodb_uri } = require('./config');
+const { port} = require('./config');
 
-const mongoose = require('mongoose');
 const express = require('express');
 const createError = require('http-errors');
 const multer = require('multer');
@@ -9,12 +8,8 @@ const startScheduleJobs = require('./jobs');
 
 const authRouter = require('./routes/auth.route');
 const usersRouter = require('./routes/users.route');
+const nPapersRouter = require('./routes/nPapers.route');
 
-mongoose.connect(mongodb_uri)
-  .then(() => {
-    console.log('Mongo DB connected');
-    startScheduleJobs();
-  });
 
 const app = express();
 
@@ -42,6 +37,7 @@ app.get('/', (req, res) => {
 // Rest of routs
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
+app.use('/papers', nPapersRouter);
 
 // Application-level middleware. Handling requests for a non-existent path
 app.use((req, res, next) => {
